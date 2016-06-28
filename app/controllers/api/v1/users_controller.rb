@@ -46,9 +46,9 @@ class Api::V1::UsersController < ApplicationController
   swagger_api :sign_up do
     summary 'Allows user to sign_up for polling'
     notes 'Email, password and username are required'
-    param :form, :"email", :string, :required, 'Email'
-    param :form, :"password", :password, :required, 'Password'
-    param :form, :"username", :string, :required, 'Username'
+    param :form, :'user[email]', :string, :required, 'Email'
+    param :form, :'user[password]', :password, :required, 'Password'
+    param :form, :'user[username]', :string, :required, 'Username'
   end
   def sign_up
     p 'param'
