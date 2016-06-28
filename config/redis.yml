@@ -1,0 +1,14 @@
+default: &default
+  namespace: poll_jwt
+  host: localhost
+  port: 6379
+
+development:
+  <<: *default
+
+production:
+  <<: *default
+
+test:
+  <<: *default
+  db: 1

@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: postgres
+  password: postgres
+
+development:
+  <<: *default
+  database: poll_development1
+
+test:
+  <<: *default
+  database: poll_test1
+
+production:
+  <<: *default
+  database: polls_production
