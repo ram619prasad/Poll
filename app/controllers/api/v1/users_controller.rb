@@ -51,8 +51,6 @@ class Api::V1::UsersController < ApplicationController
     param :form, :'user[username]', :string, :required, 'Username'
   end
   def sign_up
-    p 'param'
-    p params
     @user = User.create(user_params)
     if @user
       render json: @user
