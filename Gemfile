@@ -87,3 +87,8 @@ gem 'acts_as_votable'
 
 # Comments
 gem 'acts_as_commentable_with_threading'
+
+# Deployments
+gem 'capistrano'
+gem 'capistrano-bundler'
+gem 'capistrano-rails'
