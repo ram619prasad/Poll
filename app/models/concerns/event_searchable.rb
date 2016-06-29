@@ -1,4 +1,4 @@
-module LocationSearchable
+module EventSearchable
   extend ActiveSupport::Concern
 
   included do
@@ -31,6 +31,13 @@ module LocationSearchable
       }
     } do
       mapping do
+        indexes :title, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :description, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :performers, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :category, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :status, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :start_time, type: 'date', format: 'strict_date_optional_time'
+        indexes :end_time, type: 'date', format: 'strict_date_optional_time'
         indexes :branch, analyzer: :autocomplete, search_analyzer: :standard
         indexes :city, analyzer: :autocomplete, search_analyzer: :standard
         indexes :country, analyzer: :autocomplete, search_analyzer: :standard
@@ -38,10 +45,12 @@ module LocationSearchable
     end
     include Indexing
   end
-end
-
-module Indexing
-  def as_indexed_json(options={})
-    self.as_json(only: [:branch, :city, :country])
+  module Indexing
+    def as_indexed_json(options={})
+      self.as_json({
+        except: [:cached_votes_up, :cached_votes_down, :cached_weighted_score, :cached_weighted_total, :cached_weighted_average],
+        methods: [:branch, :city, :country]
+        })
+    end
   end
 end

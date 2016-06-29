@@ -1,5 +1,8 @@
 class Event < ApplicationRecord
 
+  # For Searching
+  include EventSearchable
+
   # Categories
   enum category: [:Others, :Instrument, :Dance, :Singing, :Yoga, :Seminar, :IndoorSports, :Quiz]
   enum status: [:scheduled, :requested, :concluded]
@@ -40,6 +43,18 @@ class Event < ApplicationRecord
 
   def downvotes_count
     get_downvotes.count
+  end
+
+  def branch
+    location.branch
+  end
+
+  def city
+    location.city
+  end
+
+  def country
+    location.country
   end
 
   # Class Methods
