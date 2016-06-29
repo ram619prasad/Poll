@@ -40,4 +40,12 @@ class User < ApplicationRecord
   def user?
     has_role?(:user)
   end
+
+  def attending_events
+    Event.scheduled.joins(:user_events).where('user_events.status = ?', 1)
+  end
+
+  def interested_events
+    Event.scheduled.joins(:user_events).where('user_events.status = ?', 0)
+  end
 end

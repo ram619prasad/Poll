@@ -2,7 +2,7 @@ class Event < ApplicationRecord
 
   # Categories
   enum category: [:Others, :Instrument, :Dance, :Singing, :Yoga, :Seminar, :IndoorSports, :Quiz]
-  enum status: [:scheduled, :concluded]
+  enum status: [:scheduled, :requested, :concluded]
 
   # Votes and likes
   acts_as_votable
@@ -30,7 +30,7 @@ class Event < ApplicationRecord
   end
 
   # Scopes
-  # scope :scheduled, { where(status: Event.statuses[:scheduled]) }
+  # scope :scheduled, -> { where(status: 'scheduled') }
 
   # Instance Methods
   #
@@ -48,7 +48,18 @@ class Event < ApplicationRecord
   # Callback Methods
   #
   def create_user_events
-    UserEvent.create! event: self, user_id: self.user_id
+    UserEvent.create! event: self, user_id: self.user_id, status: UserEvent::statuses[:attending], user_role: UserEvent::user_roles[:owner]
+  end
+
+  def create_participant(user, response)
+    user_event = self.user_events.where(event_id: self.id, user_id: user.id).first
+    if user_event.present?
+      raise Poll::Exception::AlreadyInterested if response.eql?('interested') && user_event.interested?
+      raise Poll::Exception::AlreadyAttending if response.eql?('attending') && user_event.attending?
+      user_event.update_attribute(:status, response)
+    else
+      UserEvent.create! event: self, user_id: user.id, status: UserEvent::statuses[response.to_sym], user_role: UserEvent::user_roles[:participant]
+    end
   end
 
   # Validation Methods

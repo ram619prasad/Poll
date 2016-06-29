@@ -1,6 +1,6 @@
 class Api::V1::EventsController < ApplicationController
 
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:attending_events, :interested_events]
   before_action :per_page
 
   swagger_controller :events, 'Events Management'
@@ -24,6 +24,7 @@ class Api::V1::EventsController < ApplicationController
   def create
     @event = Event.new(event_params)
     @event.user_id = current_user.id
+    current_user.admin? ? @event.scheduled! : @event.requested!
     if @event.save
       render 'api/v1/events/show', status: :ok
     else
@@ -137,8 +138,44 @@ class Api::V1::EventsController < ApplicationController
     head :ok
   end
 
+  swagger_api :participant_response do
+    summary 'Participant response'
+    notes 'Api for allowing a user to show his concern for an event'
+    param :path, :id, :integer, :required, 'Event Id'
+    param_list :form, :response, :integer, :optional, "0 -> Interested, 1 -> Attending", [:interested, :attending]
+    response :ok
+    response :not_found
+    response :not_acceptable
+    response :bad_request
+    response :unauthorized
+  end
+  def participant_response
+    response = params[:response]
+    raise Poll::Exception::InvalidParameter if (response.nil? || !([:interested, :attending].to_s.include?(response)))
+    status = @event.create_participant(current_user, response)
+    head :ok if status
+  end
 
-
+  [:attending_events, :interested_events].each do |action_name|
+    swagger_api action_name do
+      summary "logged in users #{action_name}"
+      notes "API for fetching logged in users #{action_name}"
+      param :query, :page, :integer, :optional, 'Page Number'
+      param :query, :per_page, :integer, :optional, 'Per Page'
+      response :ok
+      response :not_found
+      response :bad_request
+      response :unauthorized
+    end
+    send :define_method, action_name do
+      if action_name.eql?(:attending_events)
+        @events = current_user.attending_events.page(params[:page]).per(per_page)
+      elsif action_name.eql?(:interested_events)
+        @events = current_user.interested_events.page(params[:page]).per(per_page)
+      end
+      render 'api/v1/events/timeline', status: :ok
+    end
+  end
 
   private
   def event_params

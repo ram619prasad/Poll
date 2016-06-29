@@ -7,5 +7,11 @@ module Poll
 	  class AuthenticationTimeoutError < StandardError; end
 
 	  class NoApiKeyError < StandardError; end
+
+	  class InvalidParameter < StandardError; end
+
+	  class AlreadyAttending < StandardError; end
+
+	  class AlreadyInterested < StandardError; end
 	end
 end

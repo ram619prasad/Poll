@@ -12,8 +12,8 @@ class Ability
       user.admin? || event.user_id == user.id
     end
 
-    can [:upvote, :downvote], Event do |event|
-      event.user_id != user.id
+    can [:upvote, :downvote, :participant_response], Event do |event|
+      true
     end
     # Define abilities for the passed in user here. For example:
     #

@@ -15,6 +15,9 @@ class ApplicationController < ActionController::Base
   rescue_from Poll::Exception::AuthenticationTimeoutError, with: :authentication_timeout
   rescue_from Poll::Exception::NotAuthenticatedError, with: :not_authenticated
   rescue_from CanCan::AccessDenied, with: :forbidden
+  rescue_from Poll::Exception::InvalidParameter, with: :invalid_parameter
+  rescue_from Poll::Exception::AlreadyAttending, with: :already_attending
+  rescue_from Poll::Exception::AlreadyInterested, with: :already_interested
 
   # For Pagination helper in rabl views
   helper :api
@@ -59,6 +62,18 @@ class ApplicationController < ActionController::Base
 
   def forbidden
     render json: {errors: 'Forbidden'}, status: :forbidden
+  end
+
+  def invalid_parameter
+    render json: {errors: 'Invalid parameter'}, status: :bad_request
+  end
+
+  def already_attending
+    render json: {errors: 'You are already attending this event'}, status: :bad_request
+  end
+
+  def already_interested
+    render json: {errors: 'You are already interested in this event'}, status: :bad_request
   end
 
   def set_time_zone(&block)

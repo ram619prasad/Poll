@@ -16,9 +16,12 @@ Rails.application.routes.draw do
         member do
           put :upvote
           put :downvote
+          put :participant_response
         end
         collection do
           get :timeline
+          get :attending_events
+          get :interested_events
         end
       end
 
