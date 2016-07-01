@@ -13,5 +13,9 @@ module Poll
 	  class AlreadyAttending < StandardError; end
 
 	  class AlreadyInterested < StandardError; end
+
+	  class Scheduled < StandardError; end
+
+	  class Expired < StandardError; end
 	end
 end

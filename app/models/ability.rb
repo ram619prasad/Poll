@@ -13,7 +13,11 @@ class Ability
     end
 
     can [:upvote, :downvote, :participant_response], Event do |event|
-      true
+      user.user? && event.scheduled?
+    end
+
+    can [:approve_event], Event do |event|
+      user.admin?
     end
     # Define abilities for the passed in user here. For example:
     #

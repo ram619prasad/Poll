@@ -185,6 +185,21 @@ class Api::V1::EventsController < ApplicationController
     end
   end
 
+  swagger_api :approve_event do
+    param :path, :id, :integer, :required, 'Event Id'
+    param_list :form, :status, :string, :required, "For approving or rejecting an event", ['approve', 'reject']
+    response :ok
+    response :not_found
+    response :bad_request
+    response :unauthorized
+  end
+  def approve_event
+    raise Poll::Exception::Expired if @event.concluded?
+    raise Poll::Exception::Scheduled if @event.scheduled?
+    params[:status].eql?('approve') ? @event.scheduled! : ''
+    head :ok
+  end
+
   private
   def event_params
     params.require(:event).permit(:title, :description, :start_time, :end_time, :performers, :category, :location_id)

@@ -18,6 +18,8 @@ class ApplicationController < ActionController::Base
   rescue_from Poll::Exception::InvalidParameter, with: :invalid_parameter
   rescue_from Poll::Exception::AlreadyAttending, with: :already_attending
   rescue_from Poll::Exception::AlreadyInterested, with: :already_interested
+  rescue_from Poll::Exception::Expired, with: :expired
+  rescue_from Poll::Exception::Scheduled, with: :scheduled
 
   # For Pagination helper in rabl views
   helper :api
@@ -74,6 +76,14 @@ class ApplicationController < ActionController::Base
 
   def already_interested
     render json: {errors: 'You are already interested in this event'}, status: :bad_request
+  end
+
+  def expired
+    render json: {errors: 'Event Expired' }, status: :bad_request
+  end
+
+  def scheduled
+    render json: {errors: 'Event already scheduled' }, status: :bad_request
   end
 
   def set_time_zone(&block)

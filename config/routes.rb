@@ -17,6 +17,7 @@ Rails.application.routes.draw do
           put :upvote
           put :downvote
           put :participant_response
+          put :approve_event
         end
         collection do
           get :timeline
