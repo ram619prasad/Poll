@@ -1,4 +1,4 @@
-collection @locations
+object false
 
 node :locations do
   partial 'api/v1/locations/show', object: @locations, root: false
