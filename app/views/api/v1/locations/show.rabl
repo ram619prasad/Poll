@@ -1,2 +1,2 @@
 object @location
-attributes :location, :country, :parent_id
+attributes :branch, :city, :country

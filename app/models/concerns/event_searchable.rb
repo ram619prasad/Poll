@@ -3,7 +3,7 @@ module EventSearchable
 
   included do
     include Elasticsearch::Model
-    extend LocationSearch
+    extend EventSearch
     settings index: {
       number_of_shards: 1,
       number_of_replicas: 1,

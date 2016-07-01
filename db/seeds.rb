@@ -44,3 +44,36 @@ hyd_city = hyderabad.branch.split('- ').last
 hyderabad_locations.each do |location|
   Location.create! branch: location, city: hyd_city, country: country_name, parent_id: hyderabad_id
 end
+
+# Events
+
+# Chennai Events
+users = ['Arijit', 'Ram', 'Prakash', 'Sudheer', 'Lakshman']
+category = [:Instrument, :Dance, :Singing, :Yoga, :Seminar, :IndoorSports, :Quiz]
+owners = User.pluck(:id)
+chennai.children.each_with_index do |location, index|
+  puts "creating event in #{location.branch}"
+  location_id = index + 27
+  user = users.sample.to_s
+  cat = category.sample.to_s
+  title = "#{cat} event"
+  description = "Event on #{cat} at #{location.branch}"
+  start_time = index.eql?(0) ? DateTime.now + 2.days : DateTime.now + (index+2).days
+  end_time = start_time + 10.hours
+  Event.create! title: title, description: description, start_time: start_time, end_time: end_time, performers: user, category: cat, status: 'scheduled', location_id: location_id, user_id: owners.sample
+  sleep 2
+end
+
+# Hyderabad Events
+hyderabad.children.each_with_index do |location, index|
+  puts "creating event in #{location.branch}"
+  user = users.sample.to_s
+  cat = category.sample.to_s
+  title = "#{cat} event"
+  location_id = index + 83
+  description = "Event on #{cat} at #{location.branch}"
+  start_time = index.eql?(0) ? DateTime.now + 3.days : DateTime.now + (index+3).days
+  end_time = start_time + 10.hours
+  Event.create! title: title, description: description, start_time: start_time, end_time: end_time, performers: user, category: cat, status: 'scheduled', location_id: location_id, user_id: owners.sample
+  sleep 2
+end

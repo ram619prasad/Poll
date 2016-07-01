@@ -1,7 +1,7 @@
 class Api::V1::EventsController < ApplicationController
 
   load_and_authorize_resource except: [:attending_events, :interested_events]
-  before_action :per_page
+  before_action :per_page, :evaluate_sort
 
   swagger_controller :events, 'Events Management'
 
@@ -96,6 +96,12 @@ class Api::V1::EventsController < ApplicationController
   swagger_api :timeline do
     summary 'Fetches all Scheduled Events'
     notes 'API for fetching all scheduled events'
+    param :query, :search_term, :string, :optional, 'Search Query'
+    param :query, :category, :string, :optional, 'Category'
+    param :query, :location, :string, :optional, 'Location'
+    param :query, :start_time, :string, :optional, 'StartTime'
+    param :query, :end_time, :string, :optional, 'EndTime'
+    param_list :query, :sort, :string, :optional, 'Popularity', ['Popularity']
     param :query, :page, :integer, :optional, 'Page Number'
     param :query, :per_page, :integer, :optional, 'Per Page'
     response :ok
@@ -105,7 +111,9 @@ class Api::V1::EventsController < ApplicationController
     response :unauthorized
   end
   def timeline
-    @events = Event.scheduled.page(params[:page]).per(per_page)
+    events = Event.event_search(params[:search_term], params[:category], params[:location],
+      params[:start_time], params[:end_time])
+    @events = events.records.page(params[:page]).per(per_page).order(evaluate_sort)
   end
 
   swagger_api :upvote do
@@ -184,5 +192,10 @@ class Api::V1::EventsController < ApplicationController
 
   def per_page
     params[:per_page] ||= Event::Pagination::DEFAULT_PER_PAGE
+  end
+
+  def evaluate_sort
+    sort = params[:sort]
+    sort.nil? ? "updated_at" : sort.eql?("Date") ? "updated_at DESC" : "cached_votes_total DESC"
   end
 end

@@ -5,5 +5,5 @@ node :events do
 end
 
 node :_links do
-	paginate(@events)
+  paginate(@events)
 end

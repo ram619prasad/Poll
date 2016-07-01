@@ -9,3 +9,7 @@ end
 node :downvotes do |event|
   event.cached_votes_down
 end
+
+node :location do |event|
+  event.branch
+end
