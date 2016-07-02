@@ -57,6 +57,11 @@ class Event < ApplicationRecord
     location.country
   end
 
+  def voted
+    vote = votes_for.where(voter_id: 1, vote_flag: true).first
+    vote.present? ? 'true' : 'false'
+  end
+
   # Class Methods
   #
 

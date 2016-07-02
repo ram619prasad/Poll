@@ -13,3 +13,7 @@ end
 node :location do |event|
   event.branch
 end
+
+node :voted do |event|
+	event.voted
+end

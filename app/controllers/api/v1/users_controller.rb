@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
 	# Module which contains encode and decoding logic
-   include AuthToken
+  include AuthToken
 
   skip_before_action :authenticate_request, only: [:login, :sign_up]
 

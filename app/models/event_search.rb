@@ -1,5 +1,5 @@
 module EventSearch
-  def event_search(search_term, category=nil, location=nil, start_time=nil, end_time=nil)
+  def event_search(search_term, category=nil, location=nil, start_time=nil, end_time=nil, user_ids=nil, status=nil, voted=nil)
     query = { query: { filtered: { filter: {} } } }
     query[:query][:filtered][:query] = ElasticsearchDsl.construct_match_query(['title', 'description'], search_term) if search_term.present?
 
@@ -8,6 +8,9 @@ module EventSearch
     must_filters << ElasticsearchDsl.construct_term_filter('category', category.split(',')) if category.present?
     must_filters << ElasticsearchDsl.construct_match_query(['branch', 'city'], location) if location.present?
     must_filters << construct_time_filters(start_time, end_time) if start_time.present? || end_time.present?
+    must_filters << ElasticsearchDsl.construct_term_filter('user_id', user_ids.split(',')) if user_ids.present?
+    must_filters << ElasticsearchDsl.construct_match_query('status', status) if status.present?
+    must_filters << ElasticsearchDsl.construct_term_filter('voted', voted) if voted.present?
     filters[:must] = must_filters.flatten
     query[:query][:filtered][:filter] = ElasticsearchDsl.construct_bool(filters) if filters[:must].present?
     query.merge!({ 'from' => 0, 'size' => 1000 })

@@ -41,6 +41,7 @@ module EventSearchable
         indexes :branch, analyzer: :autocomplete, search_analyzer: :standard
         indexes :city, analyzer: :autocomplete, search_analyzer: :standard
         indexes :country, analyzer: :autocomplete, search_analyzer: :standard
+        indexes :voted, type: 'string'
       end
     end
     include Indexing
@@ -49,7 +50,7 @@ module EventSearchable
     def as_indexed_json(options={})
       self.as_json({
         except: [:cached_votes_up, :cached_votes_down, :cached_weighted_score, :cached_weighted_total, :cached_weighted_average],
-        methods: [:branch, :city, :country]
+        methods: [:branch, :city, :country, :voted]
         })
     end
   end

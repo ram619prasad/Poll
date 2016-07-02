@@ -102,6 +102,9 @@ class Api::V1::EventsController < ApplicationController
     param :query, :start_time, :string, :optional, 'StartTime'
     param :query, :end_time, :string, :optional, 'EndTime'
     param_list :query, :sort, :string, :optional, 'Popularity', ['Popularity']
+    param :query, :user_ids, :string, :optional, 'From Users'
+    param_list :query, :status, :string, :optional, 'Status', ['scheduled', 'requested', 'concluded']
+    param_list :query, :voted, :string, :optional, 'Voted', ['true', 'false']
     param :query, :page, :integer, :optional, 'Page Number'
     param :query, :per_page, :integer, :optional, 'Per Page'
     response :ok
@@ -112,7 +115,7 @@ class Api::V1::EventsController < ApplicationController
   end
   def timeline
     events = Event.event_search(params[:search_term], params[:category], params[:location],
-      params[:start_time], params[:end_time])
+      params[:start_time], params[:end_time], params[:user_ids], params[:status], params[:voted])
     @events = events.records.page(params[:page]).per(per_page).order(evaluate_sort)
   end
 
