@@ -61,7 +61,7 @@ chennai.children.each_with_index do |location, index|
   start_time = index.eql?(0) ? DateTime.now + 2.days : DateTime.now + (index+2).days
   end_time = start_time + 10.hours
   Event.create! title: title, description: description, start_time: start_time, end_time: end_time, performers: user, category: cat, status: 'scheduled', location_id: location_id, user_id: owners.sample
-  sleep 2
+  # sleep 2
 end
 
 # Hyderabad Events
@@ -75,5 +75,5 @@ hyderabad.children.each_with_index do |location, index|
   start_time = index.eql?(0) ? DateTime.now + 3.days : DateTime.now + (index+3).days
   end_time = start_time + 10.hours
   Event.create! title: title, description: description, start_time: start_time, end_time: end_time, performers: user, category: cat, status: 'scheduled', location_id: location_id, user_id: owners.sample
-  sleep 2
+  # sleep 2
 end

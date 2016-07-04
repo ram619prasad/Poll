@@ -25,7 +25,8 @@ class Event < ApplicationRecord
   validate :start_date_time
 
   # Callbacks
-  after_commit :create_user_events, on: :create
+  after_commit :create_user_events, :async_index_event, on: :create
+  after_commit :async_update_event, on: :update
 
   # Constants
   module Pagination
@@ -80,6 +81,14 @@ class Event < ApplicationRecord
     else
       UserEvent.create! event: self, user_id: user.id, status: UserEvent::statuses[response.to_sym], user_role: UserEvent::user_roles[:participant]
     end
+  end
+
+  def async_index_event
+    EventIndexerJob.perform_later(self, 'created')
+  end
+
+  def async_update_event
+    EventIndexerJob.perform_later(self, 'updated')
   end
 
   # Validation Methods

@@ -1,11 +1,13 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
+  mount Sidekiq::Web => '/sidekiq'
   devise_for :users
   namespace :api do
     namespace :v1 do
       resources :posts
 
       resources :users do
-        member do
+        collection do
           post :login
           delete :logout
           post :sign_up
